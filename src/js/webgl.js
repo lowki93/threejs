@@ -3,7 +3,12 @@ var Webgl = (function(){
     function Webgl(width, height){
         // Basic three.js setup
         this.scene = new THREE.Scene();
-        
+
+        this.mouseX = -1;
+        this.mouseY = -1;
+        this.INTERSECTED = null;
+        this.audio = new Audio();
+
         this.camera = new THREE.PerspectiveCamera(50, width / height, 1, 10000);
         this.camera.position.z = 500;
 
@@ -11,16 +16,44 @@ var Webgl = (function(){
         this.renderer.setSize(width, height);
         this.renderer.setClearColor(0x2D2D2D);
 
+        $('.three').append(this.renderer.domElement);
+
+        this.controls = new THREE.TrackballControls( this.camera, this.renderer.domElement );
+        
+        var material = new THREE.MeshPhongMaterial({
+            map: THREE.ImageUtils.loadTexture('assets/img/crate.jpg'),
+            bumpMap: THREE.ImageUtils.loadTexture('assets/img/crate.jpg'),
+            bumpScale: 3
+        });
+
+        var material2 = new THREE.MeshPhongMaterial({
+            map: THREE.ImageUtils.loadTexture('assets/img/crate.jpg'),
+            bumpMap: THREE.ImageUtils.loadTexture('assets/img/crate.jpg'),
+            bumpScale: 10
+        });
+
         // Directly add objects
-        this.someObject = new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50), new THREE.MeshBasicMaterial({color: 0xFF0000, wireframe: true}));
-        this.someObject.position.set(-60, 0, 0);
+        this.someObject = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 100), material);
+        this.someObject.position.set(0, 0, 0);
         this.scene.add(this.someObject);
 
-        // Or create container classes for them to simplify your code
+        // Directly add objects
+        this.someObject1 = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 100), material2);
+        this.someObject1.position.set(200, 0, 0);
+        this.scene.add(this.someObject1);
+
+        //Or create container classes for them to simplify your code
         this.someOtherObject = new Sphere();
-        this.someOtherObject.position.set(60, 0, 0);
+        this.someOtherObject.position.set(0, 0, 0);
         this.scene.add(this.someOtherObject);
-    }
+
+        // directional lighting
+        var directionalLight = new THREE.DirectionalLight(0xffffff);
+        directionalLight.position.set(1, 1, 1).normalize();
+        this.scene.add(directionalLight);
+
+        this.raycaster = new THREE.Raycaster();
+    };
 
     Webgl.prototype.resize = function(width, height) {
         this.camera.aspect = width / height;
@@ -28,13 +61,48 @@ var Webgl = (function(){
         this.renderer.setSize(width, height);
     };
 
-    Webgl.prototype.render = function() {    
+    Webgl.prototype.render = function() {
         this.renderer.render(this.scene, this.camera);
 
         this.someObject.rotation.y += 0.01;
         this.someObject.rotation.x += 0.01;
 
         this.someOtherObject.update();
+        this.hover();
+        this.controls.update();
+    };
+
+    Webgl.prototype.mouseMove = function(x, y) {
+        this.mouseX = x;
+        this.mouseY = y;
+    };
+
+    Webgl.prototype.hover = function() {
+        var vector = new THREE.Vector3( this.mouseX, this.mouseY, 1).unproject( this.camera );
+        this.raycaster.set( this.camera.position, vector.sub( this.camera.position ).normalize() );
+
+        var intersects = this.raycaster.intersectObjects( this.scene.children );
+
+        if ( intersects.length > 0 ) {
+
+            if ( this.INTERSECTED != intersects[0].object ) {
+
+                if ( this.INTERSECTED ) this.INTERSECTED.material.emissive.setHex( this.INTERSECTED.currentHex );
+
+                this.INTERSECTED = intersects[ 0 ].object;
+                this.INTERSECTED.currentHex = this.INTERSECTED.material.emissive.getHex();
+                this.INTERSECTED.material.emissive.setHex( 0xff0000 );
+                this.audio.play();
+
+            }
+
+        } else {
+
+            if ( this.INTERSECTED ) this.INTERSECTED.material.emissive.setHex( this.INTERSECTED.currentHex );
+
+            this.INTERSECTED = null;
+
+        }
     };
 
     return Webgl;

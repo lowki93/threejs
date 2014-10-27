@@ -13,7 +13,7 @@ var Sphere = (function(){
     Sphere.prototype.constructor = Sphere;
 
     Sphere.prototype.update = function() {
-        this.mesh.rotation.y += 0.01;
+        this.mesh.rotation.y += 0.05;
     };
 
     return Sphere;

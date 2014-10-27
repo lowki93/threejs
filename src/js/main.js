@@ -4,7 +4,6 @@ $(document).ready(init);
 
 function init(){
     webgl = new Webgl(window.innerWidth, window.innerHeight);
-    $('.three').append(webgl.renderer.domElement);
 
     gui = new dat.GUI();
     gui.close();
@@ -22,3 +21,10 @@ function animate() {
     requestAnimationFrame(animate);
     webgl.render();
 }
+
+$(document).on('mousemove', function () {
+
+	event.preventDefault();
+	webgl.mouseMove(( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1);
+
+})
