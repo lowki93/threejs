@@ -1,5 +1,6 @@
 var Webgl = (function(){
-
+//http://planetpixelemporium.com/saturn.html
+// https://github.com/superguigui/threejs-starter-kit
     function Webgl(width, height){
         // Basic three.js setup
         this.scene = new THREE.Scene();
