@@ -12,8 +12,9 @@ var Sphere = (function(){
     Sphere.prototype = new THREE.Object3D;
     Sphere.prototype.constructor = Sphere;
 
-    Sphere.prototype.update = function() {
-        this.mesh.rotation.y += 0.05;
+    Sphere.prototype.update = function(time, position) {
+        // this.mesh.position.y = - Math.cos(time) + position;
+        // this.mesh.position.x = - Math.sin(time) + position;
     };
 
     return Sphere;
