@@ -3,28 +3,30 @@ var webgl, gui;
 $(document).ready(init);
 
 function init(){
-    webgl = new Webgl(window.innerWidth, window.innerHeight);
+	webgl = new Webgl(window.innerWidth, window.innerHeight);
 
-    gui = new dat.GUI();
-    gui.close();
+	gui = new dat.GUI();
+	gui.close();
 
-    $(window).on('resize', resizeHandler);
+	$(window).on('resize', resizeHandler);
 
-    animate();
+	animate();
 }
 
 function resizeHandler() {
-    webgl.resize(window.innerWidth, window.innerHeight);
+	webgl.resize(window.innerWidth, window.innerHeight);
 }
 
 function animate() {
-    requestAnimationFrame(animate);
-    webgl.render();
+	requestAnimationFrame(animate);
+	webgl.render();
 }
 
-$(document).on('mousemove', function () {
+$(document)
+	.on('click', function () {
 
-	event.preventDefault();
-	webgl.mouseMove(( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1);
+		event.preventDefault();
+		webgl.mouseClick(( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1);
 
-})
+	})
+;

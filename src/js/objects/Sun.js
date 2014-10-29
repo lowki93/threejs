@@ -14,7 +14,7 @@ var Sun = ( function (){
 			light: false
 		});
 
-		var sunSphere = new THREE.SphereGeometry(200, 200, 200);
+		var sunSphere = new THREE.SphereGeometry(500, 64, 48);
 		this.sun = new THREE.Mesh(sunSphere, sunMaterial);
 		this.add( this.sun );
 	};
