@@ -2,31 +2,30 @@ var Webgl = (function(){
 //http://planetpixelemporium.com/saturn.html
 // https://github.com/superguigui/threejs-starter-kit
 // maybe replace that by window... or something
-var userOpts    = {
-    cameraX       : Math.PI,
-    duration    : 2500,
-    delay       : 200
-};
-
     function Webgl(width, height, gui){
 
         // Basic three.js setup
         this.gui = gui;
-        this.activeControls = true;
+        this.activeControls = false;
         this.scene = new THREE.Scene();
         this.potentiel = 0.5;
-        this.object = null;
         this.mouseActive = false;
         this.planets = [];
         this.mouseX = -1;
         this.mouseY = -1;
         this.INTERSECTED = null;
         this.audio = new Audio();
+        this.isMoving = true;
+        this.distance = 1500;
 
-        this.camera = new THREE.PerspectiveCamera(50, width / height, 1, 10000);
-        this.camera.position.z = 1000;
-        this.camera.position.y = 1500;
-        this.camera.position.x = 1000;
+        this.options = {
+            cameraX : 500
+        };
+
+        this.camera = new THREE.PerspectiveCamera(50, width / height, 1, 100000);
+        this.camera.position.z = 15000;
+        this.camera.position.y = 15000;
+        this.camera.position.x = 15000;
 
         this.cameraCenter = new THREE.Object3D();
         this.cameraCenter = this.camera;
@@ -48,6 +47,7 @@ var userOpts    = {
         this.sun.position.set( 0, 0, 0 );
         this.scene.add( this.sun );
         this.planets.push( this.sun.sun );
+        this.object = this.sun;
 
         /** MARCH **/
         this.march = new March();
@@ -82,20 +82,19 @@ var userOpts    = {
 
         this.raycaster = new THREE.Raycaster();
 
-        // build the GUI
-        this.buildGui(userOpts, function() {
-            console.log(this.camera);
-            // this.updateCamera();
-        });
+        this.audio.play();
+
+        this.menu();
+                // build the GUI
+        this.buildGui(this.options);
+
+        TweenMax.to(this.camera.position, 5,  {x: 1500, y: 1500, z:1500, ease:Linear.None, onComplete: function() {
+        }, onCompleteScope: this });
     };
 
-     Webgl.prototype.buildGui = function(options, callback) {
-            // the callback notified on UI change
-        var change  = function(){
-            callback(options);
-        }
-        // create and initialize the UI
-        this.gui.add(options, 'cameraX').name('Range coordinate').min(-Math.PI * 0.25).max(Math.PI * 0.25)    .onChange(change);
+    Webgl.prototype.buildGui = function(options) {
+
+        this.gui.add(this, 'distance').name('Distance').min(300).max(2000).listen();
     };
 
     Webgl.prototype.resize = function(width, height) {
@@ -107,31 +106,28 @@ var userOpts    = {
     Webgl.prototype.render = function() {
         this.renderer.render(this.scene, this.camera);
 
-        this.time = Date.now() * this.potentiel;
+        if( this.isMoving ){
+            this.time = Date.now() * this.potentiel;
 
-        this.march.update(this.time, this.march.position, this.marchPositionX );
-        this.earth.update(this.time, this.earth.position, this.earthPositionX);
-        this.saturn.update(this.time, this.saturn.position, this.saturnPositionX );
+            this.march.update(this.time, this.march.position, this.marchPositionX );
+            this.earth.update(this.time, this.earth.position, this.earthPositionX);
+            this.saturn.update(this.time, this.saturn.position, this.saturnPositionX );
 
-        switch(this.object) {
-            case this.saturn :  this.saturn.updateCamera(this.time, this.camera, this.saturnPositionX);
-                break;
-            case this.earth : this.earth.updateCamera(this.time, this.camera.position, this.earthPositionX);
-                break;
-            case this.march : this.march.updateCamera(this.time, this.camera.position, this.marchPositionX);
-                break;
-        };
+            switch(this.object) {
+                case this.saturn :  this.saturn.updateCamera(this.time, this.camera, this.saturnPositionX, this.distance);
+                    break;
+                case this.earth : this.earth.updateCamera(this.time, this.camera.position, this.earthPositionX, this.distance);
+                    break;
+                case this.march : this.march.updateCamera(this.time, this.camera.position, this.marchPositionX, this.distance);
+                    break;
+            };
 
-        TWEEN.update();
+        }
 
         if( this.mouseActive == true)
             this.hover();
 
         this.mouseActive = false;
-
-        // if( this.activeControls ) {
-        //     this.controls.update();
-        // }
 
     };
 
@@ -141,21 +137,23 @@ var userOpts    = {
         this.mouseY = y;
     };
 
-    Webgl.prototype.updateCamera = function() {
-        this.camera.rotation.x = userOpts.cameraX;
-    };
 
-    Webgl.prototype.seeSaturn = function() {
-        // this.object = this.saturn;
-        // this.camera.position.x = this.saturn.position.x + 900;
-        // this.camera.position.y = this.saturn.position.y + 900;
-        // this.camera.position.z = this.saturn.position.z + 900;
+    Webgl.prototype.moveCameraButton = function() {
+
+        var posX = Math.random();
+        var posY = Math.random();
+        var posZ = Math.random();
+
+        TweenMax.to(this.camera.up, 2,  {x: posX, y: posY, z:posZ, ease:Expo.easeInOut, onUpdate: function() {
+                this.camera.lookAt(this.object.position);
+            }, onUpdateScope: this });
+
     };
 
     Webgl.prototype.planetAxe = function( position ) {
-this.audio.play();
-        var geometry = new THREE.TorusGeometry( position, 1, 16, 100 );
-        var material = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.DoubleSide } );
+
+        var geometry = new THREE.TorusGeometry( position, 2, 10, 200 );
+        var material = new THREE.MeshBasicMaterial( { color: 0x333333, side: THREE.DoubleSide } );
         var mesh = new THREE.Mesh( geometry, material );
         mesh.rotation.x = - Math.PI * 0.5;
         this.scene.add( mesh );
@@ -163,6 +161,7 @@ this.audio.play();
     };
 
     Webgl.prototype.hover = function() {
+        
         var vector = new THREE.Vector3( this.mouseX, this.mouseY, 1).unproject( this.camera );
         this.raycaster.set( this.camera.position, vector.sub( this.camera.position ).normalize() );
 
@@ -170,50 +169,74 @@ this.audio.play();
 
         if ( intersects.length > 0 ) {
 
+            this.isMoving = false;
+            this.activeControls = false;
             if ( this.INTERSECTED != intersects[0].object ) {
 
                 this.object = intersects[0].object.parent;
 
                 if( this.object.parent != this.scene )
                     this.object = this.object.parent;
-                // console.log(this.camera, this.object);
-                var position = { x : this.camera.position.x, y : this.camera.position.y, z : this.camera.position.z };
-                console.log(position);
-                var target = { x : this.object.position.x + 900, y: this.object.position.y + 900, z:this.object.position.z + 900 };
-                console.log(target);
-                var tween = new TWEEN.Tween(position).to(target, 1000);
-                tween.onUpdate(function(){
 
-                });
-                tween.onComplete(function(){ console.log('fini'); console.log(this.camera) });
-                tween.start();
-
-                this.camera.position.x = this.object.position.x + 900;
-                this.camera.position.y = this.object.position.y + 900;
-                this.camera.position.z = this.object.position.z + 900;
-
-                // this.camera.lookAt( object.position );
-
-
-
-                // if ( this.INTERSECTED ) this.INTERSECTED.material.emissive.setHex( this.INTERSECTED.currentHex );
-
-                // this.INTERSECTED = intersects[ 0 ].object;
-                // this.INTERSECTED.currentHex = this.INTERSECTED.material.emissive.getHex();
-                // this.INTERSECTED.material.emissive.setHex( 0xff0000 );
-
-
-                this.audio.play();
-
+                this.moveCamera();
+                
             }
 
-        } /*else {
+        }
+    };
 
-            if ( this.INTERSECTED ) this.INTERSECTED.material.emissive.setHex( this.INTERSECTED.currentHex );
+    Webgl.prototype.movePlanet = function(planet) {
 
-            this.INTERSECTED = null;
+        switch(planet) {
+            case 'saturn' :  this.object = this.saturn;
+                break;
+            case 'earth' : this.object = this.earth;
+                break;
+            case 'march' : this.object = this.march;
+                break;
+            case 'sun' : this.object = this.sun;
+                break;
+        };
 
-        }*/
+        this.moveCamera();
+
+    };
+
+    Webgl.prototype.moveCamera = function() {
+
+        switch(this.object) {
+            case this.saturn :  this.distance = 900;
+                break;
+            case this.earth : this.distance = 500;
+                break;
+            case this.march : this.distance = 200;
+                break;
+            default: this.distance = 1500;
+                break;
+        };
+
+        TweenMax.to(this.camera.position, 0.5,  {x: this.object.position.x + this.distance, y: this.object.position.y + this.distance, z:this.object.position.z + this.distance, ease:Expo.easeInOut, onComplete: function() {
+            this.isMoving = true
+        }, onCompleteScope: this });
+
+    };
+
+    Webgl.prototype.menu = function() {
+
+        $('.click-info')
+            .animate({
+                top: 0,
+            }, 4000);
+
+        $('.menu')
+            .animate({
+                left: 40,
+            }, 4000);
+
+        $('.menu-planets')
+            .animate({
+                right: 40,
+            }, 4000);
     };
 
     return Webgl;

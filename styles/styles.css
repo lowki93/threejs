@@ -4,29 +4,96 @@ body, html {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    background-color: #000;
 }
 
 @font-face {
-    font-family: Lato;
-    src: url(../fonts/Lato-HairlineItalic.ttf);
+    font-family: Tstar;
+    src: url(../fonts/T-StarMonoRound.otf);
 }
 
 .menu {
 	position: absolute;
+	z-index: 999;
+	left: -200px;
+	top: 40px;
+}
+
+.menu-planets {
+	list-style: none;
+	position: absolute;
+	z-index: 999;
+	right: -200px;
+	top: 40px;
+}
+
+.menu-planets li {
+	margin-top: 30px;
 }
 
 .planets {
 	width: 200px;
 	height: 300px;
-	border: 1px solid #78d19e;
+	border: 1px solid #fff;
 	position: absolute;
 	bottom: -300px;
+	left: 40px;
 	opacity: 0;
 	color: #fff;
 	padding: 0 10px;
-	font-family: Lato;
+	font-family: Tstar;
 }
 
 .planet {
-	display: none
+	/*display: none*/
+}
+
+.title {
+	position: absolute;
+	opacity: 0;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	display: -webkit-flex;
+	justify-content: center;
+	-webkit-justify-content: center;
+	align-items: center;
+	-webkit-align-items: center;
+}
+
+.title div {
+	font-family: Tstar;
+	color: #ffffff;
+	text-align: center;
+	font-size: 50px;
+}
+
+.title div a {
+	font-size: 30px;
+}
+
+a {
+	font-family: Tstar;
+	font-size: 15px;
+	padding: 10px;
+	color: #ffffff;
+	cursor: pointer;
+	border: 1px solid #ffffff;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #477ed0;
+	border: 1px solid #477ed0;
+}
+
+.click-info {
+	top: -100px;
+	position: absolute;
+	text-align: center;
+	padding: 20px;
+	color: #fff;
+	width: 100%;
+	font-family: Tstar;
+	font-size: 20px;
 }

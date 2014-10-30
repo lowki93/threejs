@@ -4,7 +4,7 @@ var Audio = (function() {
 		this.audio = document.createElement('audio');
 		this.source = document.createElement('source');
 
-		this.source.src = 'http://www.mariomayhem.com/downloads/sounds/mario_bros/smb_die.wav';
+		this.source.src = 'assets/audio/Flood.mp3';
 
 		this.audio.appendChild(this.source);
 	};

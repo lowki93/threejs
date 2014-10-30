@@ -90,11 +90,10 @@ var Saturn = ( function () {
 
     };
 
-    Saturn.prototype.updateCamera = function(time, camera, position) {
+    Saturn.prototype.updateCamera = function(time, camera, position, distance) {
 
-    	// camera.rotation.y += 0.05;
-    	camera.position.x = Math.cos(time * 0.0008 ) * position + 500 ;
-        camera.position.z = Math.sin(time * 0.0008 ) * position + 500 ;
+    	camera.position.x = Math.cos(time * 0.0008 ) * position + distance ;
+        camera.position.z = Math.sin(time * 0.0008 ) * position + distance ;
 
     };
 

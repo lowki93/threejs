@@ -50,10 +50,10 @@ var Earth = ( function () {
         this.moon.position.z = - Math.sin(time * 0.005 ) * this.moonPositionX;
     };
 
-    Earth.prototype.updateCamera = function(time, cameraPosition, position) {
+    Earth.prototype.updateCamera = function(time, cameraPosition, position, distance) {
 
-    	cameraPosition.x = Math.cos(time * 0.001  ) * position + 500 ;
-        cameraPosition.z = Math.sin(time * 0.001  ) * position + 500 ;
+    	cameraPosition.x = Math.cos(time * 0.001  ) * position + distance ;
+        cameraPosition.z = Math.sin(time * 0.001  ) * position + distance ;
 
     };
 
