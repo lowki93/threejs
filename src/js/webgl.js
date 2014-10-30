@@ -153,7 +153,7 @@ var userOpts    = {
     };
 
     Webgl.prototype.planetAxe = function( position ) {
-
+this.audio.play();
         var geometry = new THREE.TorusGeometry( position, 1, 16, 100 );
         var material = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.DoubleSide } );
         var mesh = new THREE.Mesh( geometry, material );
@@ -203,7 +203,7 @@ var userOpts    = {
                 // this.INTERSECTED.material.emissive.setHex( 0xff0000 );
 
 
-                // this.audio.play();
+                this.audio.play();
 
             }
 
