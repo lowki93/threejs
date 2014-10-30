@@ -29,22 +29,6 @@ function animate() {
 	webgl.render();
 }
 
-function showInformation(planet) {
-
-	$('.planet').hide();
-	$('.'+planet).show();
-	$('.planets')
-		.animate({
-			opacity: 1,
-			bottom: 40,
-		}, 1000)
-		.delay( 5000 )
-		.animate({
-			opacity: 0,
-			bottom: -300,
-		}, 1000);
-
-}
 $(document)
 	.on('click', function () {
 
@@ -81,7 +65,6 @@ $('.menu-planets a')
 		event.preventDefault();
 		var planet = $(this).attr('href');
 		webgl.movePlanet(planet);
-		showInformation(planet);
 
 	})
 ;

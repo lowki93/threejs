@@ -204,20 +204,24 @@ var Webgl = (function(){
 
     Webgl.prototype.moveCamera = function() {
 
+        var planet;
+
         switch(this.object) {
-            case this.saturn :  this.distance = 900;
+            case this.saturn :  this.distance = 900; planet = 'saturn';
                 break;
-            case this.earth : this.distance = 500;
+            case this.earth : this.distance = 500; planet = 'earth';
                 break;
-            case this.march : this.distance = 200;
+            case this.march : this.distance = 200; planet = 'march';
                 break;
-            default: this.distance = 1500;
+            default: this.distance = 1500; planet = 'sun';
                 break;
         };
 
         TweenMax.to(this.camera.position, 0.5,  {x: this.object.position.x + this.distance, y: this.object.position.y + this.distance, z:this.object.position.z + this.distance, ease:Expo.easeInOut, onComplete: function() {
             this.isMoving = true
         }, onCompleteScope: this });
+
+        this.showInformation(planet);
 
     };
 
@@ -238,6 +242,24 @@ var Webgl = (function(){
                 right: 40,
             }, 4000);
     };
+
+    Webgl.prototype.showInformation = function(planet) {
+
+        $('.planet').hide();
+        $('.'+planet).show();
+        $('.planets')
+            .animate({
+                opacity: 1,
+                bottom: 40,
+            }, 1000)
+            .delay( 5000 )
+            .animate({
+                opacity: 0,
+                bottom: -300,
+            }, 1000);
+
+    };
+
 
     return Webgl;
 
