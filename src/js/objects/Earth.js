@@ -32,7 +32,7 @@ var Earth = ( function () {
 		this.add( this.planet );
 
 		this.moon = new Moon();
-		this.moonPositionX = 75; 
+		this.moonPositionX = 75;
 		this.moon.position.set( this.moonPositionX, 0, 0 );
 		this.add( this.moon );
 	};
@@ -40,18 +40,18 @@ var Earth = ( function () {
 	Earth.prototype = new THREE.Object3D;
     Earth.prototype.constructor = Earth;
 
-    Earth.prototype.update = function(time, earthPosition, position, speed) {
-    	this.earth.rotation.y += 0.005 * speed;
+    Earth.prototype.update = function(time, earthPosition, position) {
+    	this.earth.rotation.y += 0.005;
 
     	earthPosition.x = Math.cos(time * 0.001 ) * position;
         earthPosition.z = Math.sin(time * 0.001 ) * position;
 
-        this.moon.position.x = - Math.cos(time * 0.005 * speed ) * this.moonPositionX;
-        this.moon.position.z = - Math.sin(time * 0.005 * speed  ) * this.moonPositionX;
+        this.moon.position.x = - Math.cos(time * 0.005 ) * this.moonPositionX;
+        this.moon.position.z = - Math.sin(time * 0.005 ) * this.moonPositionX;
     };
 
-    Earth.prototype.updateCamera = function(time, cameraPosition, position, speed) {
-    	// console.log('toto');
+    Earth.prototype.updateCamera = function(time, cameraPosition, position) {
+
     	cameraPosition.x = Math.cos(time * 0.001  ) * position + 500 ;
         cameraPosition.z = Math.sin(time * 0.001  ) * position + 500 ;
 

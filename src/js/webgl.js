@@ -1,9 +1,18 @@
 var Webgl = (function(){
 //http://planetpixelemporium.com/saturn.html
 // https://github.com/superguigui/threejs-starter-kit
-//  "tabs_small": true,
-    function Webgl(width, height){
+// maybe replace that by window... or something
+var userOpts    = {
+    cameraX       : Math.PI,
+    duration    : 2500,
+    delay       : 200
+};
+
+    function Webgl(width, height, gui){
+
         // Basic three.js setup
+        this.gui = gui;
+        this.activeControls = true;
         this.scene = new THREE.Scene();
         this.potentiel = 0.5;
         this.object = null;
@@ -72,6 +81,21 @@ var Webgl = (function(){
         this.scene.add(light);
 
         this.raycaster = new THREE.Raycaster();
+
+        // build the GUI
+        this.buildGui(userOpts, function() {
+            console.log(this.camera);
+            // this.updateCamera();
+        });
+    };
+
+     Webgl.prototype.buildGui = function(options, callback) {
+            // the callback notified on UI change
+        var change  = function(){
+            callback(options);
+        }
+        // create and initialize the UI
+        this.gui.add(options, 'cameraX').name('Range coordinate').min(-Math.PI * 0.25).max(Math.PI * 0.25)    .onChange(change);
     };
 
     Webgl.prototype.resize = function(width, height) {
@@ -83,31 +107,49 @@ var Webgl = (function(){
     Webgl.prototype.render = function() {
         this.renderer.render(this.scene, this.camera);
 
-        var time = Date.now();
+        this.time = Date.now() * this.potentiel;
 
-        // this.march.update(time, this.march.position, this.marchPositionX );
-        this.earth.update(time, this.earth.position, this.earthPositionX, this.potentiel );
-        this.saturn.update(time, this.saturn.position, this.saturnPositionX );
+        this.march.update(this.time, this.march.position, this.marchPositionX );
+        this.earth.update(this.time, this.earth.position, this.earthPositionX);
+        this.saturn.update(this.time, this.saturn.position, this.saturnPositionX );
 
         switch(this.object) {
-            case this.saturn :  this.saturn.updateCamera(time, this.camera.position, this.saturnPositionX);
+            case this.saturn :  this.saturn.updateCamera(this.time, this.camera, this.saturnPositionX);
                 break;
-            case this.earth : this.earth.updateCamera(time, this.camera.position, this.earthPositionX, this.potentiel);
+            case this.earth : this.earth.updateCamera(this.time, this.camera.position, this.earthPositionX);
                 break;
-        };            
+            case this.march : this.march.updateCamera(this.time, this.camera.position, this.marchPositionX);
+                break;
+        };
+
+        TWEEN.update();
 
         if( this.mouseActive == true)
             this.hover();
 
         this.mouseActive = false;
 
-        // this.controls.update();
+        // if( this.activeControls ) {
+        //     this.controls.update();
+        // }
+
     };
 
     Webgl.prototype.mouseClick = function(x, y) {
         this.mouseActive = true;
         this.mouseX = x;
         this.mouseY = y;
+    };
+
+    Webgl.prototype.updateCamera = function() {
+        this.camera.rotation.x = userOpts.cameraX;
+    };
+
+    Webgl.prototype.seeSaturn = function() {
+        // this.object = this.saturn;
+        // this.camera.position.x = this.saturn.position.x + 900;
+        // this.camera.position.y = this.saturn.position.y + 900;
+        // this.camera.position.z = this.saturn.position.z + 900;
     };
 
     Webgl.prototype.planetAxe = function( position ) {
@@ -130,15 +172,30 @@ var Webgl = (function(){
 
             if ( this.INTERSECTED != intersects[0].object ) {
 
-                this.object = intersects[0].object.parent.parent;
- 
+                this.object = intersects[0].object.parent;
+
+                if( this.object.parent != this.scene )
+                    this.object = this.object.parent;
+                // console.log(this.camera, this.object);
+                var position = { x : this.camera.position.x, y : this.camera.position.y, z : this.camera.position.z };
+                console.log(position);
+                var target = { x : this.object.position.x + 900, y: this.object.position.y + 900, z:this.object.position.z + 900 };
+                console.log(target);
+                var tween = new TWEEN.Tween(position).to(target, 1000);
+                tween.onUpdate(function(){
+
+                });
+                tween.onComplete(function(){ console.log('fini'); console.log(this.camera) });
+                tween.start();
+
                 this.camera.position.x = this.object.position.x + 900;
                 this.camera.position.y = this.object.position.y + 900;
                 this.camera.position.z = this.object.position.z + 900;
+
                 // this.camera.lookAt( object.position );
 
-                
-                
+
+
                 // if ( this.INTERSECTED ) this.INTERSECTED.material.emissive.setHex( this.INTERSECTED.currentHex );
 
                 // this.INTERSECTED = intersects[ 0 ].object;

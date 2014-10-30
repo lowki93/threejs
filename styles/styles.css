@@ -5,3 +5,28 @@ body, html {
     padding: 0;
     overflow: hidden;
 }
+
+@font-face {
+    font-family: Lato;
+    src: url(../fonts/Lato-HairlineItalic.ttf);
+}
+
+.menu {
+	position: absolute;
+}
+
+.planets {
+	width: 200px;
+	height: 300px;
+	border: 1px solid #78d19e;
+	position: absolute;
+	bottom: -300px;
+	opacity: 0;
+	color: #fff;
+	padding: 0 10px;
+	font-family: Lato;
+}
+
+.planet {
+	display: none
+}

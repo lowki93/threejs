@@ -31,6 +31,13 @@ var March =  ( function () {
 
 	};
 
+    March.prototype.updateCamera = function(time, cameraPosition, position) {
+
+    	cameraPosition.x = Math.cos(time * 0.0005  ) * position + 500 ;
+        cameraPosition.z = Math.sin(time * 0.0005  ) * position + 500 ;
+
+    };
+
 	return March;
 
 })();

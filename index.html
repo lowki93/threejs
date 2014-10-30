@@ -6,6 +6,13 @@
 	<link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
+    <div class="menu"><button>test</button></div>
+    <div class="planets">
+        <div class="planet saturn">
+            <h2>Saturn</h2>
+            <p>Saturn is the sixth planet of the solar system in order of distance from the Sun and the second largest, both in size and mass, after Jupiter. His name is that of the Roman god of time</p>
+        </div>
+    </div>
     <div class="three"></div>
     <script src="assets/lib/dat-gui/build/dat.gui.min.js"></script>
 	<script src="assets/lib/jquery/dist/jquery.min.js"></script>
@@ -39,7 +46,7 @@
     <script id="fragmentAtmosphere" type="x-shader/x-vertex">
         varying vec3 vNormal;
         void main(){
-            float intensity = pow( 0.7 - dot( vNormal, vec3( 0.0, 0.0, 1.1 ) ), 6.0 ); 
+            float intensity = pow( 0.7 - dot( vNormal, vec3( 0.0, 0.0, 1.1 ) ), 6.0 );
             gl_FragColor = vec4( 0.35, 0.5, 1.0, 0.4 ) * intensity;
         }
     </script>
